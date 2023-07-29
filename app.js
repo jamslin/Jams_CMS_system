@@ -31,7 +31,7 @@ db.on('error', error => console.error(error))
 db.once('open', () => console.log('Connected to Mongoose'))
 
 //setting up routes
-const indexRouter = require('./routes/index')
+const indexRouter = require('./routes/indexRouter')
 app.use('/', indexRouter)
 
 app.listen(process.env.PORT || 3000)
