@@ -20,7 +20,7 @@ app.use(
 );
 app.set('view engine', 'ejs')
 app.set('views', __dirname + '/views')
-app.set('layout', 'layouts/layout')
+app.set('layout', '_include/layouts/layout')
 app.use(expressLayouts)
 app.use(methodOverride('_method'))
 app.use(express.static('public'))
@@ -50,30 +50,11 @@ app.use(
   })
 );
 
-// Define the authentication middleware function
-const authenticateUser = (req, res, next) => {
-  if (req.session.userId) {
-    // User is authenticated, continue to the next middleware or route handler
-    next();
-  } else {
-    // User is not authenticated, redirect to the login page
-    res.redirect('/login');
-  }
-};
-
-// Use the authentication middleware for routes that require authentication
-app.get('/dashboard', authenticateUser, (req, res) => {
-  // Render the dashboard page for authenticated users
-  res.render('dashboard', { user: req.session.userId });
-});
-
 //setting up routes
-const indexRouter = require('./routes/indexRouter')
+const indexRouter = require('./routes/index')
 app.use('/', indexRouter)
-const loginRouter = require('./routes/login')
-app.use('/login', loginRouter)
-const registerRouter = require('./routes/register')
-app.use('/register', registerRouter)
+const dashboardRouter = require('./routes/dashboard')
+app.use('/dashboard', dashboardRouter)
 
 app.listen(process.env.PORT || 3000)
 

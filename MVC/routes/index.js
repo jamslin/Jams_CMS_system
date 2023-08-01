@@ -7,7 +7,7 @@ router.get('/', async (req, res)=>{
     try {
         data = await CommonModel.find()
       } catch {
-        data = ['shit']
+        console.log("failed to get data")
       }
     console.log(data)
 
