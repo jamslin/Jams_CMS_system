@@ -83,14 +83,14 @@ router
     try {
         const { username, email, password } = req.body;
         const existingUser = await User.findOne({ $or: [{ username }, { email }] });
-    
+        console.log(req.body)
         if (existingUser) {
         return res.render('dashboard/register', { title: 'register', error: 'Username or email already exists.' });
         }
     
-        const newUser = new User({ username, email, password });
-        await newUser.save();
-        res.redirect('dashboard/login');
+        const newUser = new User({ username, email, password })
+        await newUser.save()
+        res.redirect('/dashboard/login')
     } catch (error) {
         res.render('dashboard/register', { title: 'register' , error: 'Error registering user. Please try again.' });
     }
