@@ -9,8 +9,104 @@
     </div>
 </nav>
 <div class="container mt-5">
-    <h2>Welcome, <%= user.username %>!</h2>
+    <h1>Node JS CMS system</h1>
+    <p>Welcome, <%= user.username %>!</p>
     <p>This is your dashboard page.</p>
     <!-- Your dashboard content goes here -->
-    <%= data %>
+    <% Object.keys(collection).forEach(docKey=> { %>
+        <h1>Document <%= docKey%>: </h1>
+        <% Object.keys(collection[docKey]['_doc']).forEach(fieldKey=> { %>
+            <% if(fieldKey != "_id"){%>
+                <div docKey='<%= docKey %>' fieldKey='<%= fieldKey %>' fieldVal='<%=collection[docKey][fieldKey]%>'>
+                    <div class="data">
+                        <%= fieldKey%>:<%= collection[docKey][fieldKey]%>
+                    </div>
+                    <button type="button" class="btn btn-secondary" onclick="editInput(this.parentNode)">Edit</button>
+                    <button type="button" class="btn btn-danger">Delete</button>
+                </div>
+            <%}%>
+        <% });%>
+    <% }); %>
+    <script>
+        function editInput(curObj) {
+            let docKey = curObj.getAttribute("docKey");
+            let fieldKey = curObj.getAttribute("fieldKey");
+            let fieldVal = curObj.getAttribute("fieldVal");
+            console.log(docKey);
+            console.log(fieldKey);
+            console.log(fieldVal);
+            
+            let input = curObj.querySelector(".data");
+            console.log(input);
+            input.innerHTML = `<input name="fieldKey" value=`+fieldKey+` placeholder="Field">`;
+            input.innerHTML += ` : <input name="fieldVal" value="`+ fieldVal +`" placeholder="Field value">`;
+            input.innerHTML += ` <button type="button" class="btn btn-success" onclick="updateDBpost()">reqPOST</button>`;
+            input.innerHTML += ` <button type="button" class="btn btn-success" onclick="updateDBget()">reqGET</button>`;
+            input.innerHTML += ` <button type="button" class="btn btn-danger" onclick="cancelEdit(this.parentNode.parentNode)">cancel</button>`;
+        }
+        
+        
+        function updateDBpost() {
+            const requestData = { message: 'hihi' };
+
+            fetch('/dashboard/updateDB', {
+                method: 'POST',
+                body: JSON.stringify(requestData)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(responseData => {
+                    console.log(responseData);
+                    if (responseData) {
+                        console.log(`Server Response: ${responseData.message}`);
+                    } else {
+                        console.error('Server Response is undefined.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+
+        function updateDBget() {
+            fetch('/dashboard/updateDB?field=HIHI', {
+                method: 'GET'
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(responseData => {
+                    console.log(responseData);
+                    if (responseData) {
+                        console.log(`Server Response: ${responseData.message}`);
+                    } else {
+                        console.error('Server Response is undefined.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+
+        function cancelEdit(curObj){
+            console.log(curObj);
+
+            let docKey = curObj.getAttribute("docKey");
+            let fieldKey = curObj.getAttribute("fieldKey");
+            let fieldVal = curObj.getAttribute("fieldVal");
+            console.log(docKey);
+            console.log(fieldKey);
+            console.log(fieldVal);
+            
+            let input = curObj.querySelector(".data");
+            input.innerHTML = fieldKey+" : "+ fieldVal;
+        }
+    </script>
 </div>

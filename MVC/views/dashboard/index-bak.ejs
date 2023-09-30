@@ -1,0 +1,78 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Dashboard</a>
+    <div class=" navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/dashboard/logout">Logout</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div class="container mt-5">
+    <h2>Welcome, <%= user.username %>!</h2>
+    <p>This is your dashboard page.</p>
+    <!-- Your dashboard content goes here -->
+    <form class="form" method="POST" action="/update">
+      <% Object.keys(collection).forEach(key => { 
+        %>
+        <div class="form">
+          <strong>Document <%= key %>:</strong><br>
+            <% Object.keys(collection[key]['_doc']).forEach(subKey => {  %>
+                
+                <% function printObject(obj, spacing = '') { %>
+                    <ul>
+                        <% for (const key in obj) { %>
+                            <% if (typeof obj[key] === 'object') { %>
+                                <ul>
+                                    <li><strong><%= key %>:</strong>  <%= printObject(obj[key], spacing + '&nbsp;&nbsp;&nbsp;') %></li>
+                                </ul>
+                            <% } else { %>
+                                <ul>
+                                    <li class="form-row">
+                                        <div class="col">
+                                            <strong>Key</strong>
+                                        </div>
+                                        <div class="col">
+                                            <strong>value</strong>
+                                        </div>
+                                    </li>
+                                    <li class="form-row">
+                                        <div class="col">
+                                            <input type="text" class="form-control ml-1" name="<%= key %>" value="<%= key %>" required>
+                                        </div>
+                                        <div class="col">
+                                            <input type="text" class="form-control ml-1" name="<%= key %>.<%= subKey %>" value="<%= obj[key] %>" required>
+                                        </div>
+                                    </li>
+                                </ul>
+                            <% } %>
+                        <% } %>
+                    </ul>
+                <% } %>
+
+                <% if (subKey !== "_id") { %> 
+                    <% if (typeof collection[key][subKey] === 'object') { %>
+                        <ul class="form-row">
+                            <li class="form-inline">
+                                <strong><input type="text" class="form-control d-inline-flex" name="rename.<%= key %>.<%= subKey %>" value="<%= subKey %>" required> :</strong> 
+                                <%= printObject(collection[key][subKey]) %>
+                            </li>
+                        </ul>
+                    <% } else { %>
+                        <ul  class="form-row">
+                            <li class="form-inline">
+                                <strong><input type="text" class="form-control d-inline-flex" name="rename.<%= key %>.<%= subKey %>" value="<%= subKey %>" required> :</strong> 
+                                <input type="text" class="form-control ml-1" name="update.<%= key %>.<%= subKey %>" value="<%= collection[key][subKey] %>" required>
+                            </li>
+                        </ul>
+                    <% } %>
+                <% } %>
+           <% });%>
+        
+        </div>
+      <% }); %>
+      <button type="submit" class="btn btn-primary">Update</button>
+    </form>
+</div>
+
+      
